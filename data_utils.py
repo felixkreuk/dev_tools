@@ -12,10 +12,13 @@ from tensorflow.python.platform import flags
 from torch.autograd import Variable
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data.dataset import Subset, Dataset
-from cleverhans.attacks import FastGradientMethod
-from cleverhans.model import CallableModelWrapper
-from cleverhans.utils import AccuracyReport
-from cleverhans.utils_pytorch import convert_pytorch_model_to_tf
+try:
+    from cleverhans.attacks import FastGradientMethod
+    from cleverhans.model import CallableModelWrapper
+    from cleverhans.utils import AccuracyReport
+    from cleverhans.utils_pytorch import convert_pytorch_model_to_tf
+except Exception:
+    print("==> no cleverhand detected")
 
 
 def split_dataset(ds, split=0.1):
