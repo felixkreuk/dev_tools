@@ -18,10 +18,32 @@ def get_git_hash():
     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
 
 
+def get_nonexistant_path(fname_path):
+    """
+    Get the path to a filename which does not exist by incrementing path.
+
+    Examples
+    --------
+    >>> get_nonexistant_path('/etc/issue')
+    '/etc/issue-1'
+    >>> get_nonexistant_path('whatever/1337bla.py')
+    'whatever/1337bla.py'
+    """
+    if not os.path.exists(fname_path):
+        return fname_path
+    filename, file_extension = os.path.splitext(fname_path)
+    i = 1
+    new_fname = "{}-{}{}".format(filename, i, file_extension)
+    while os.path.exists(new_fname):
+        i += 1
+        new_fname = "{}-{}{}".format(filename, i, file_extension)
+    return new_fname
+
+
 class Experiment(object):
     def __init__(self, root_dir):
         self.start_time = time.time()
-        self.dir = root_dir
+        self.dir = get_nonexistant_path(root_dir)
         self.ckpt_dir = join(self.dir, 'ckpt')
         self.code_dir = join(self.dir, f'code_{get_git_hash()}')
         self.tb_dir = join(self.dir, 'tensorboard')
@@ -57,18 +79,18 @@ class Experiment(object):
         for k,v in hparams.items():
             logger.info("\t{} - {}".format(k, v))
 
-    def load_hparams(self, hparams_file=None):
-        if not hparams_file:
-            hparams_file = self.hparams_file
+    @classmethod
+    def load_hparams(cls, hparams_file):
+        """load_hparams - returns a Namespace object
+        loaded from a yaml file.
+
+        :param hparams_file: path to yaml file
+        """
         logger.info(f"loading hparams from: {hparams_file}")
 
         hparams = yaml.load(hparams_file)
         hparams = Namespace(**hparams)
         return hparams
-
-    def tensorboard_call(self, func, *args, **kwargs):
-        func = getattr(self.tb_writer, func)
-        func(*args, **kwargs)
 
     def log_metric(self, metrics_dict):
         # log in tensorboard
@@ -85,7 +107,6 @@ class Experiment(object):
         # save metrics to csv
         df = pd.DataFrame(self.metrics)
         df.to_csv(join(self.dir, 'metrics.csv'), index=False)
-
 
 
 if __name__ == "__main__":
