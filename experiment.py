@@ -66,6 +66,7 @@ class Experiment(object):
         self.ckpt_dir = join(self.dir, 'ckpt')
         self.code_dir = join(self.dir, 'code')
         self.hparams_file = join(self.dir, 'hparams.yaml')
+        self.metrics_path = join(self.dir, 'metrics.csv')
         self.metrics = []
 
         # create dirs
@@ -77,6 +78,7 @@ class Experiment(object):
         logger.info("experiment folder: {}".format(self.dir))
         logger.info("model checkpoint folder: {}".format(self.ckpt_dir))
         logger.info("code folder: {}".format(self.code_dir))
+        logger.info("metric csv: {}".format(self.metrics_path))
 
         # create writers
         # tensorboard
@@ -167,7 +169,7 @@ class Experiment(object):
         logger.info("saving experiment")
         # save metrics to csv
         df = pd.DataFrame(self.metrics)
-        df.to_csv(join(self.dir, 'metrics.csv'), index=False)
+        df.to_csv(self.metrics_path, index=False)
 
 
 if __name__ == "__main__":
