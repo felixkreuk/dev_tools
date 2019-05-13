@@ -12,9 +12,14 @@ from tensorboardX import SummaryWriter
 import os
 from os.path import join
 from distutils.dir_util import copy_tree
-from comet_ml import Experiment as CometExperiment
-import test_tube
-import wandb
+
+try:
+    from comet_ml import Experiment as CometExperiment
+    import wandb
+    EXTERNAL_LOGGING_AVAILABLE = True
+except Exception as e:
+    EXTERNAL_LOGGING_AVAILABLE = False
+    logger.error("Not using external logging services (comet_ml/wandb)")
 
 
 def get_nonexistant_path(fname_path):
@@ -68,7 +73,10 @@ class Experiment(object):
         os.makedirs(self.ckpt_dir, exist_ok=True)
         os.makedirs(self.code_dir, exist_ok=True)
         copy_tree(os.path.abspath("."), self.code_dir)        
-        logger.info(f"experiment folder: {self.dir}")
+
+        logger.info("experiment folder: {}".format(self.dir))
+        logger.info("model checkpoint folder: {}".format(self.ckpt_dir))
+        logger.info("code folder: {}".format(self.code_dir))
 
         # create writers
         # tensorboard
@@ -76,7 +84,7 @@ class Experiment(object):
 
         # comet_ml
         self.comet_exp = None
-        if use_comet:
+        if use_comet and EXTERNAL_LOGGING_AVAILABLE:
             self.comet_exp = CometExperiment(api_key="t9sD0CMOByTjLcdxCbNMh6KWu",
                                              project_name=self.project_name,
                                              workspace="felixkreuk")
@@ -85,7 +93,7 @@ class Experiment(object):
 
         # wandb
         self.wandb_exp = False
-        if use_wandb:
+        if use_wandb and EXTERNAL_LOGGING_AVAILABLE:
             self.wandb_exp = True
             wandb.init(name=self.exp_name,
                        project=self.project_name,
@@ -98,7 +106,7 @@ class Experiment(object):
             hparams_file = self.hparams_file
 
         # translate hparams into dict from various types
-        if type(hparams) in [argparse.Namespace, test_tube.argparse_hopt.TTNamespace]:
+        if type(hparams) in [argparse.Namespace]:
             logger.info("parsing ArgumentParser hparams") 
             hparams = vars(hparams)
         elif type(hparams) == dict:
