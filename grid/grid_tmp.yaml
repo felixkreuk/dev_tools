@@ -1,0 +1,34 @@
+settings:
+  python: /home/mlspeech/felixk/anaconda3/envs/unsupervised_segmentor/bin/python
+  wd: /home/mlspeech/felixk/workspace/unsupervised_segmentor/
+  tmp_wd: /data/felix/tmp/
+  ts: /home/mlspeech/felixk/installations/ts/ts
+
+nodes:
+  - 'jakku.lnx.biu.ac.il'
+  - 'lobot.lnx.biu.ac.il'
+  # - 'moraband.lnx.biu.ac.il'
+  - 'tatooine.lnx.biu.ac.il'
+  - 'jabba.lnx.biu.ac.il'
+#   - 'naboo.lnx.biu.ac.il'
+#   - 'yoda.lnx.biu.ac.il'
+  # - 'yavin.lnx.biu.ac.il'
+#   - 'fondor.lnx.biu.ac.il'
+#   - 'mustafar.lnx.biu.ac.il'
+
+common:
+    seed: [100, 200, 300, 400]
+    project: temp_project
+    epochs: 10
+    val_check_interval: 1.0
+    train: timit
+    grad_clip: 0
+
+grids:
+  # - tag: model_selection_zproj
+  #   z_proj: [2, 4, 8, 16, 32, 64, 128]
+
+  - tag: model_selection_zproj-1
+    latent_dim: 256
+    z_dim: [2, 4, 8, 16, 32, 64, 128]
+    z_proj: 0

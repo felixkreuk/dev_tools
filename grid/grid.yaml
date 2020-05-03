@@ -1,0 +1,43 @@
+settings:
+  python: /home/mlspeech/felixk/anaconda3/envs/unsupervised_segmentor/bin/python
+  cwd: /home/mlspeech/felixk/anaconda3/envs/unsupervised_segmentor/bin/python
+  ts: /home/mlspeech/felixk/installations/ts/ts
+
+nodes:
+  - 'jakku.lnx.biu.ac.il'
+#   - 'lobot.lnx.biu.ac.il'
+  - 'moraband.lnx.biu.ac.il'
+#   - 'tatooine.lnx.biu.ac.il'
+  - 'jabba.lnx.biu.ac.il'
+#   - 'naboo.lnx.biu.ac.il'
+#   - 'yoda.lnx.biu.ac.il'
+  - 'yavin.lnx.biu.ac.il'
+#   - 'fondor.lnx.biu.ac.il'
+#   - 'mustafar.lnx.biu.ac.il'
+
+common:
+    seed: [100, 200, 300]
+    project: temp_project
+    epochs: 15
+
+grids:
+  - tag: baselines
+    train: [timit, buckeye]
+
+  - tag: libri_percent_ablation
+    train: libri_timit
+    libri_percent: [0.1, 0.5, 1.0]
+
+#   - tag: n_negatives_ablation
+#     train: timit_libri
+#     n_negatives: [1, 2, 3]
+
+#   - tag: pred_steps_ablation
+#     train: timit_libri
+#     libri_percent: [0.1, 0.5, 1.0]
+#     pred_steps: [3, 5, 7]
+
+#   - tag: context_ablation
+#     train: timit
+#     context: mean
+#     context_size: [2, 3, 4, 5]
