@@ -43,7 +43,7 @@ def run():
     # connect to all nodes and get n_gpus
     nodes = []
     for node in nodes_settings:
-        conn = spur.SshShell(hostname=node, username="felixk", password="zxcewq123", missing_host_key=spur.ssh.MissingHostKey.accept)
+        conn = spur.SshShell(hostname=node, username="XXX", password="XXX", missing_host_key=spur.ssh.MissingHostKey.accept)
         n_gpus = int(conn.run(['nvidia-smi', '-L']).output.decode("utf-8").count('\n'))
         nodes.append(Node(name=node, connection=conn, n_gpus=n_gpus))
     n_nodes = len(nodes)
